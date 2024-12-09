@@ -6,3 +6,10 @@ to run frontend:
   pnpm install
   pnpm run dev
 ```
+
+to run backend:
+```
+  cd backend
+  pnpm install
+  node app.js
+```

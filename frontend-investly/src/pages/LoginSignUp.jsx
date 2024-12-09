@@ -1,83 +1,228 @@
-import '../index.css'
-import { useState } from 'react';
-import user_icon from '../assets/person.png';
-import email_icon from '../assets/email.png';
-import password_icon from '../assets/password.png';
+import "../index.css";
+import { useState } from "react";
+import user_icon from "../assets/person.png";
+import email_icon from "../assets/email.png";
+import password_icon from "../assets/password.png";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginSignUp = () => {
   const [action, setAction] = useState("Sign Up");
+  const [error, setError] = useState(null);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    if (action === "Login") {
+      // Login
+      // e.preventDefault();
+      setError(null); // Reset error
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/users/login",
+          {
+            name: emailOrUsername,
+            email: emailOrUsername,
+            password: password,
+          }
+        );
+
+        // Simpan token JWT ke localStorage
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("id", response.data.id);
+        console.log("Login successful:", response.data);
+
+        // Redirect ke dashboard setelah login berhasil
+        navigate("/dashboard");
+      } catch (err) {
+        console.error("Error logging in:", err);
+        setError("Invalid credentials. Please try again.");
+      }
+    } else {
+      // Sign up
+      // e.preventDefault();
+      setError(null); // Reset error
+
+      // Validasi password dan confirm password
+      if (password !== confirmPassword) {
+        return setError("Passwords do not match");
+      }
+
+      if (!validateEmail(email)) {
+        return setError("Please enter a valid email address");
+      }
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/users/register",
+          {
+            username,
+            email,
+            password,
+          }
+        );
+        console.log("User registered:", response.data);
+        navigate("/login"); // Redirect to login page after successful sign-up
+      } catch (err) {
+        console.error("Error registering user:", err);
+        setError("Failed to register. Please try again.");
+      }
+    }
+  };
+
+  const handleChangeState = (action) => {
+    setAction(action);
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setEmailOrUsername("");
+    setError(null);
+  };
+
+  const validateEmail = (email) => {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return regex.test(email);
+  };
 
   return (
     <div className="flex flex-col mx-auto w-2/5 bg-white">
-      <div className="flex flex-col items-center gap-2 w-full mt-8">
-        <div className="text-[#3c009d] text-5xl font-bold">{action}</div>
-        <div className="w-16 h-1.5 bg-[#3c009d] rounded-lg"></div>
-      </div>
-
+      {/* Login and sign up switch button */}
       <div className="flex gap-8 mx-auto mt-5">
-        <div 
+        <div
           className={`flex justify-center items-center w-56 h-14 text-lg font-bold rounded-full cursor-pointer
-            ${action === "Login" ? 'bg-gray-200 text-gray-600' : 'bg-[#4c00b4] text-white'}`}
-          onClick={() => setAction("Sign Up")}
+            ${
+              action === "Login"
+                ? "bg-gray-200 text-gray-600"
+                : "bg-[#4c00b4] text-white"
+            }`}
+          onClick={() => handleChangeState("Sign Up")}
         >
           Sign Up
         </div>
-        <div 
+        <div
           className={`flex justify-center items-center w-56 h-14 text-lg font-bold rounded-full cursor-pointer
-            ${action === "Sign Up" ? 'bg-gray-200 text-gray-600' : 'bg-[#4c00b4] text-white'}`}
-          onClick={() => setAction("Login")}
+            ${
+              action === "Sign Up"
+                ? "bg-gray-200 text-gray-600"
+                : "bg-[#4c00b4] text-white"
+            }`}
+          onClick={() => handleChangeState("Login")}
         >
           Login
         </div>
       </div>
 
-      <div className="mt-3 flex flex-col gap-6">
-        {action === "Login" ? <div></div> : (
-          <div className="flex items-center mx-auto w-[480px] h-20 bg-[#eaeaea] rounded-md">
-            <img src={user_icon} alt="" className="mx-8" />
-            <input 
-              type="text" 
-              placeholder="Enter Name"
-              className="h-12 w-[400px] bg-transparent border-none outline-none text-gray-600 text-lg" 
-            />
-          </div>
-        )}
-        
-        <div className="flex items-center mx-auto w-[480px] h-20 bg-[#eaeaea] rounded-md">
-          <img src={email_icon} alt="" className="mx-8" />
-          <input 
-            type="email" 
-            placeholder="Enter E-mail"
-            className="h-12 w-[400px] bg-transparent border-none outline-none text-gray-600 text-lg" 
-          />
-        </div>
-        
-        <div className="flex items-center mx-auto w-[480px] h-20 bg-[#eaeaea] rounded-md">
-          <img src={password_icon} alt="" className="mx-8" />
-          <input 
-            type="password" 
-            placeholder="Enter Password"
-            className="h-12 w-[400px] bg-transparent border-none outline-none text-gray-600 text-lg" 
-          />
-        </div>
+      {/* Title (sign up or login) */}
+
+      <div className="flex flex-col items-center gap-2 w-full mt-8">
+        <div className="text-[#3c009d] text-5xl font-bold">{action}</div>
+        <div className="w-16 h-1.5 bg-[#3c009d] rounded-lg"></div>
+        {/* Errors */}
+
+        <div className="text-red-600 text-xl">{error}</div>
       </div>
 
-      {action === "Sign Up" ? <div></div> : (
-        <div className="pl-16 mt-7 text-gray-600 text-lg">
-          Lost Password? <span className="text-[#4c00b4] cursor-pointer">Click Here!</span>
-        </div>
+      {/* Fields */}
+
+      <div className="mt-3 flex flex-col gap-6">
+        {action === "Login" ? (
+          // If login, then show login elements
+          <>
+            <div className="flex items-center mx-auto w-[480px] h-20 bg-[#eaeaea] rounded-md">
+              <img src={user_icon} alt="" className="mx-8" />
+              <input
+                type="text"
+                placeholder="Enter Email or Username"
+                className="h-12 w-[400px] bg-transparent border-none outline-none text-gray-600 text-lg"
+                value={emailOrUsername}
+                onChange={(e) => setEmailOrUsername(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex items-center mx-auto w-[480px] h-20 bg-[#eaeaea] rounded-md">
+              <img src={password_icon} alt="" className="mx-8" />
+              <input
+                type="password"
+                placeholder="Enter Password"
+                className="h-12 w-[400px] bg-transparent border-none outline-none text-gray-600 text-lg"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center mx-auto w-[480px] h-20 bg-[#eaeaea] rounded-md">
+              <img src={user_icon} alt="" className="mx-8" />
+              <input
+                type="text"
+                placeholder="Enter Username"
+                className="h-12 w-[400px] bg-transparent border-none outline-none text-gray-600 text-lg"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex items-center mx-auto w-[480px] h-20 bg-[#eaeaea] rounded-md">
+              <img src={email_icon} alt="" className="mx-8" />
+              <input
+                type="email"
+                placeholder="Enter Email"
+                className="h-12 w-[400px] bg-transparent border-none outline-none text-gray-600 text-lg"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex items-center mx-auto w-[480px] h-20 bg-[#eaeaea] rounded-md">
+              <img src={password_icon} alt="" className="mx-8" />
+              <input
+                type="password"
+                placeholder="Enter Password"
+                className="h-12 w-[400px] bg-transparent border-none outline-none text-gray-600 text-lg"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex items-center mx-auto w-[480px] h-20 bg-[#eaeaea] rounded-md">
+              <img src={password_icon} alt="" className="mx-8" />
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                className="h-12 w-[400px] bg-transparent border-none outline-none text-gray-600 text-lg"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      {action === "Sign Up" ? (
+        <div></div>
+      ) : (
+        <div className="pl-16 mt-7 text-gray-600 text-lg"></div>
       )}
 
       <div className="flex justify-center mt-4">
-        <button 
+        <button
           className="px-8 py-3 bg-[#4c00b4] text-white rounded-full font-bold"
-          onClick={() => console.log("submit")}
+          onClick={() => handleSubmit()}
         >
           Submit
         </button>
       </div>
     </div>
   );
-}
+};
 
 export default LoginSignUp;

@@ -1,12 +1,13 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Dashboard from './pages/Dashboard'
-import LoginSignUp from './pages/LoginSignUp'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import Dashboard from "./pages/Dashboard";
+import LoginSignUp from "./pages/LoginSignUp";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -30,9 +31,15 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p> */}
-      <LoginSignUp class="bg-red-500"></LoginSignUp>
+      <Router>
+        <Routes>
+          <Route path="/signup" element={<LoginSignUp />} />
+          <Route path="/login" element={<LoginSignUp />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </Router>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
