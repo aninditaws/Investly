@@ -12,35 +12,39 @@ const getUsers = async (req, res) => {
     res.status(200).json(data);
 };
 
-// Menambah pengguna baru
+// Menambah pengguna baru dengan username, email, dan password
 const createUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
+    // Hash password sebelum menyimpannya
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Menyimpan pengguna baru dengan username, email, dan hashed password
     const { data, error } = await supabase
         .from('users')
-        .insert([{ name, email, password }]);
+        .insert([{ username, email, password: hashedPassword }]);
 
     if (error) {
         console.error('Error adding user:', error);
         return res.status(500).json({ error: 'Failed to add user' });
     }
 
-    res.status(201).json(data);
+    res.status(201).json(data);  // Mengirimkan data pengguna yang baru ditambahkan
 };
 
-// Fungsi login
-const loginUser = async (req, res) => {
-    const { email, password } = req.body;
 
-    // Cek apakah pengguna ada di database
+const loginUser = async (req, res) => {
+    const { emailOrUsername, password } = req.body;
+
+    // Cek apakah pengguna ada di database dengan username atau email
     const { data: user, error } = await supabase
         .from('users')
         .select('*')
-        .eq('email', email)
+        .or(`email.eq.${emailOrUsername},username.eq.${emailOrUsername}`)
         .single();
 
     if (error || !user) {
-        return res.status(401).json({ error: 'User not found' });
+        return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Verifikasi password
@@ -54,7 +58,6 @@ const loginUser = async (req, res) => {
 
     res.status(200).json({ token });
 };
-
 
 module.exports = {
     getUsers,
