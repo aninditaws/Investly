@@ -19,7 +19,6 @@ const LoginSignUp = () => {
   const handleSubmit = async () => {
     if (action === "Login") {
       // Login
-      // e.preventDefault();
       setError(null); // Reset error
 
       try {
@@ -35,6 +34,7 @@ const LoginSignUp = () => {
         // Simpan token JWT ke localStorage
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("id", response.data.id);
+        localStorage.setItem("name", response.data.name);
         console.log("Login successful:", response.data);
 
         // Redirect ke dashboard setelah login berhasil
@@ -45,7 +45,6 @@ const LoginSignUp = () => {
       }
     } else {
       // Sign up
-      // e.preventDefault();
       setError(null); // Reset error
 
       // Validasi password dan confirm password
@@ -207,12 +206,7 @@ const LoginSignUp = () => {
         )}
       </div>
 
-      {action === "Sign Up" ? (
-        <div></div>
-      ) : (
-        <div className="pl-16 mt-7 text-gray-600 text-lg"></div>
-      )}
-
+      {/* Submit button */}
       <div className="flex justify-center mt-4">
         <button
           className="px-8 py-3 bg-[#4c00b4] text-white rounded-full font-bold"
