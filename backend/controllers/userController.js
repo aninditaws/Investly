@@ -60,8 +60,54 @@ const loginUser = async (req, res) => {
   res.status(200).json({ token: token, id: user.id, name: user.name });
 };
 
+const setRiskLevel = async (req, res) => {
+  try {
+    const { id, riskLevel } = req.body;
+
+    const { data, error } = await supabase
+      .from("users")
+      .update({ risk_level: riskLevel })
+      .eq("id", id);
+
+    if (error) {
+      return res.status(401).json({ error: "Error updating risk level" });
+    }
+
+    console.log("Risk level updated successfully:", id, riskLevel);
+    return res.status(200).json({ id: id, risk_level: riskLevel });
+  } catch (err) {
+    return res.status(401).json({ error: err });
+  }
+};
+
+// Mendapatkan pengguna berdasarkan userId
+const getUserById = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Fetch user from the database by userId
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("id, name, email, risk_level") // Fetch required columns
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching user:", error);
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    res.status(500).json({ error: "An unexpected error occurred" });
+  }
+};
+
 module.exports = {
   getUsers,
   createUser,
   loginUser,
+  setRiskLevel,
+  getUserById, // Export the new function
 };

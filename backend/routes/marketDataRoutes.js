@@ -1,12 +1,18 @@
-// routes/marketDataRoutes.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { getMarketData, addMarketData } = require('../controllers/marketDataController');
+const {
+  getMarketData,
+  addMarketData,
+  getMarketDataBySector,
+} = require("../controllers/marketDataController");
 
-// Mendapatkan data pasar
-router.get('/', getMarketData);
+// Get all market data
+router.get("/", getMarketData);
 
-// Menambah data pasar baru
-router.post('/', addMarketData);
+// Add new market data
+router.post("/", addMarketData);
+
+// Get market data by sector
+router.get("/sector/:sector", getMarketDataBySector);
 
 module.exports = router;

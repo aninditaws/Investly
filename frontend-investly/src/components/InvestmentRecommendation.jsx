@@ -71,7 +71,7 @@ const InvestmentRecommendation = ({ userId }) => {
   };
 
   return (
-    <div className="mt-6 p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
+    <div className="mt-6 p-6 bg-gray-50 shadow-lg rounded-lg max-w-4xl mx-auto">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">
         Investment Recommendation
       </h2>

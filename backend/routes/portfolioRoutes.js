@@ -1,12 +1,23 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authenticateToken = require('../auth');
-const { addPortfolio, getPortfolio } = require('../controllers/portfolioController');  // Mengimpor controller
+const authenticateToken = require("../auth");
+const {
+  addPortfolio,
+  getPortfolio,
+  getInvestmentRecommendation,
+} = require("../controllers/portfolioController");
 
-// Menambah portofolio baru
-router.post('/', addPortfolio);
+// Add a new portfolio entry
+router.post("/", authenticateToken, addPortfolio);
 
-// Mengambil portofolio berdasarkan userId
-router.get('/:userId', authenticateToken, getPortfolio);
+// Fetch portfolio by userId
+router.get("/:userId", authenticateToken, getPortfolio);
+
+// Get investment recommendations based on portfolio
+router.get(
+  "/recommendations/:userId",
+  authenticateToken,
+  getInvestmentRecommendation
+);
 
 module.exports = router;

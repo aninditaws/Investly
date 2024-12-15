@@ -121,7 +121,7 @@ const LoginSignUp = () => {
 
       <div className="flex flex-col items-center gap-2 w-full mt-8">
         <div className="text-[#3c009d] text-5xl font-bold">{action}</div>
-        <div className="w-16 h-1.5 bg-[#3c009d] rounded-lg"></div>
+        {/* <div className="w-32 h-1.5 bg-[#3c009d] rounded-lg"></div> */}
         {/* Errors */}
 
         <div className="text-red-600 text-xl">{error}</div>
