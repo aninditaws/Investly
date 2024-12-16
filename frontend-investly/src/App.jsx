@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import RiskAssessment from "./pages/RiskAssessment";
 import MarketData from "./pages/MarketData";
 import Portfolio from "./pages/Portfolio";
+import InvestmentCalculator from "./pages/InvestmentCalculator";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/risk" element={<RiskAssessment />} />
           <Route path="/market-data/:sector" element={<MarketData />} />
           <Route path="/portfolio/:userId" element={<Portfolio />} />
+          <Route path="/invest" element={<InvestmentCalculator />} />
         </Routes>
       </Router>
     </>

@@ -59,8 +59,29 @@ const getMarketDataBySector = async (req, res) => {
   res.status(200).json(data);
 };
 
+// Get market data summary (average return rate)
+const getMarketDataSummary = async (req, res) => {
+  const { data, error } = await supabase
+    .from("market_data")
+    .select("average_return");
+
+  if (error) {
+    console.error("Error fetching market data summary:", error);
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch market data summary" });
+  }
+
+  // Calculate average return rate
+  const totalReturn = data.reduce((sum, item) => sum + item.average_return, 0);
+  const averageReturn = totalReturn / data.length;
+
+  res.status(200).json({ averageReturn });
+};
+
 module.exports = {
   getMarketData,
   addMarketData,
   getMarketDataBySector,
+  getMarketDataSummary,
 };

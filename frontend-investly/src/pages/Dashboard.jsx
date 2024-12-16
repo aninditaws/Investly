@@ -138,6 +138,12 @@ const Dashboard = () => {
           >
             Manage Your Portfolio
           </button>
+          <button
+            onClick={() => navigate(`/invest`)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md"
+          >
+            Calculate your investment
+          </button>
         </div>
       </div>
     </div>
