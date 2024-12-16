@@ -66,7 +66,13 @@ const LoginSignUp = () => {
           }
         );
         console.log("User registered:", response.data);
-        navigate("/login"); // Redirect to login page after successful sign-up
+        setError(null);
+        setPassword("");
+        setUsername("");
+        setEmail("");
+        setConfirmPassword("");
+        setEmailOrUsername("");
+        setAction("Login"); // Redirect to login page after successful sign-up
       } catch (err) {
         console.error("Error registering user:", err);
         setError("Failed to register. Please try again.");
